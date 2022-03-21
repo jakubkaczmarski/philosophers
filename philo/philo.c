@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 12:19:48 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/21 20:26:52 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/21 20:32:31 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 struct p_info{
 	int philo_num;
 	pthread_mutex_t *forks;
+	pthread_mutex_t *state;
 	long start_time;
 }	typedef t_info;
 t_info philo_inf;
@@ -52,6 +53,7 @@ void *manage_philo(void *philo)
 	printf("Philosopher number %d is thinking\n", arr->philo_num);
 	pthread_mutex_lock(&philo_inf.forks[arr->philo_num]);
 	pthread_mutex_lock(&philo_inf.forks[(arr->philo_num + 1) % philo_inf.philo_num]);
+	pthread_mutex_lock(&philo_inf.state[arr->philo_num]);
 	gettimeofday(&current_time, NULL);
 	if(philo_inf.start_time + arr->time_to_die < current_time.tv_sec)
 	{
@@ -61,6 +63,7 @@ void *manage_philo(void *philo)
 	}
 	printf("Philosopher %d is eating \n", arr->philo_num);
 	usleep(arr->time_to_eat);
+	pthread_mutex_unlock(&philo_inf.state[arr->philo_num]);
 	gettimeofday(&current_time, NULL);
 	philo_inf.start_time = current_time.tv_sec;
 	pthread_mutex_unlock(&philo_inf.forks[arr->philo_num]);
@@ -71,12 +74,6 @@ void *manage_philo(void *philo)
 }
 int main(int argc, char **argv)
 {
-	
-	pthread_mutex_t mutex;
-	pthread_mutex_lock(&mutex);
-	
-	pthread_mutex_unlock(&mutex);
-	pthread_mutex_init(&mutex, NULL);
 	t_philosopher philo;
 	if(get_input(argc,argv, &philo, &philo_inf.philo_num) == 0)
 	{
@@ -88,12 +85,15 @@ int main(int argc, char **argv)
 	int i = 0;
 	int j = 0;
 	//Allocate memory for mutaxes
+	// pthread_mutex_init(&philo_inf.forks, NULL);
 	philo_inf.forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * philo_inf.philo_num);
+	philo_inf.state = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * philo_inf.philo_num);
 	while(j < philo.has_to_eat )
 	{
 		while(i < philo_inf.philo_num)
 		{
 			pthread_mutex_init(&philo_inf.forks[i], NULL);
+			pthread_mutex_init(&philo_inf.state[i], NULL);
 			i++;
 		}
 		i = 0;
@@ -112,6 +112,7 @@ int main(int argc, char **argv)
 		while(i < philo_inf.philo_num)
 		{
 			pthread_mutex_destroy(&philo_inf.forks[i]);
+			pthread_mutex_destroy(&philo_inf.state[i]);
 			i++;
 		}
 		j++;
