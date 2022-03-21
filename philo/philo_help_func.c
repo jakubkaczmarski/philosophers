@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/19 17:31:36 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/21 14:20:41 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/21 19:52:16 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ int get_input(int argc,char **argv, t_philosopher *philo, int *numof_philo)
 		{
 			return 0;
 		}
+	}else{
+		philo->has_to_eat = 1;
 	}
     if(*numof_philo < 0 || philo->philo_num < 0 || philo->time_to_eat < 0 || philo->time_to_sleep < 0)
         return 0;

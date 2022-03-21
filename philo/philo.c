@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 12:19:48 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/21 18:19:51 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/21 20:26:52 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 struct p_info{
 	int philo_num;
 	pthread_mutex_t *forks;
+	long start_time;
 }	typedef t_info;
 t_info philo_inf;
 t_philosopher *	init_philo(t_philosopher philo_id, int num_of_philo)
@@ -35,18 +36,33 @@ t_philosopher *	init_philo(t_philosopher philo_id, int num_of_philo)
 		arr[i].time_to_die = philo_id.time_to_die;
 		arr[i].time_to_sleep = philo_id.time_to_sleep;
 		arr[i].time_to_eat = philo_id.time_to_eat;
+		arr[i].state = 1;
 		i++;
 	}
 	return arr;
 }
+//Add mutex to state and start_time;
+//To do
 void *manage_philo(void *philo)
 {
 	t_philosopher *arr = (t_philosopher *)philo;
+	if(arr->state == 0)
+		return (NULL);
+	struct timeval current_time;
 	printf("Philosopher number %d is thinking\n", arr->philo_num);
 	pthread_mutex_lock(&philo_inf.forks[arr->philo_num]);
 	pthread_mutex_lock(&philo_inf.forks[(arr->philo_num + 1) % philo_inf.philo_num]);
+	gettimeofday(&current_time, NULL);
+	if(philo_inf.start_time + arr->time_to_die < current_time.tv_sec)
+	{
+		printf("Philospher died\n");
+		arr->state = 0;
+		return NULL;
+	}
 	printf("Philosopher %d is eating \n", arr->philo_num);
 	usleep(arr->time_to_eat);
+	gettimeofday(&current_time, NULL);
+	philo_inf.start_time = current_time.tv_sec;
 	pthread_mutex_unlock(&philo_inf.forks[arr->philo_num]);
 	pthread_mutex_unlock(&philo_inf.forks[(arr->philo_num + 1) % philo_inf.philo_num]);
 	printf("Philosopher %d is sleeping \n", arr->philo_num);
@@ -69,33 +85,39 @@ int main(int argc, char **argv)
 	};
 	t_philosopher *arr;
 	arr = init_philo(philo, philo_inf.philo_num);
-	
 	int i = 0;
+	int j = 0;
 	//Allocate memory for mutaxes
 	philo_inf.forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * philo_inf.philo_num);
-	while(i < philo_inf.philo_num)
+	while(j < philo.has_to_eat )
 	{
-		pthread_mutex_init(&philo_inf.forks[i], NULL);
-		i++;
+		while(i < philo_inf.philo_num)
+		{
+			pthread_mutex_init(&philo_inf.forks[i], NULL);
+			i++;
+		}
+		i = 0;
+		while(i < philo_inf.philo_num)
+		{
+			pthread_create(&arr[i].philo_thread, NULL, manage_philo, (void*)&arr[i]);
+			i++;
+		}
+		i = 0;
+		while(i < philo_inf.philo_num)
+		{
+			pthread_join(arr[i].philo_thread, NULL);
+			i++;
+		}
+		i = 0;
+		while(i < philo_inf.philo_num)
+		{
+			pthread_mutex_destroy(&philo_inf.forks[i]);
+			i++;
+		}
+		j++;
 	}
-	i = 0;
-	while(i < philo_inf.philo_num)
-	{
-		pthread_create(&arr[i].philo_thread, NULL, manage_philo, (void*)&arr[i]);
-		i++;
-	}
-	i = 0;
-	while(i < philo_inf.philo_num)
-	{
-		pthread_join(arr[i].philo_thread, NULL);
-		i++;
-	}
-	i = 0;
-	while(i < philo_inf.philo_num)
-	{
-		pthread_mutex_destroy(&philo_inf.forks[i]);
-		i++;
-	}
+	free(philo_inf.forks);
+	free(arr);
 	// int philo_id = 0;
 	// pthread_t t0;
 	// pthread_create(&t0, NULL, init_philo, (void *)philo_id);

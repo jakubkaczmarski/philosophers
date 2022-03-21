@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "philo.h": "c",
-        "ratio": "c"
+        "ratio": "c",
+        "time.h": "c"
     }
 }
