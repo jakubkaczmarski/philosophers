@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/27 17:10:57 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/27 17:55:23 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ int change_to_dead(t_philo *philo_p)
 	if(philo_p->last_meal_time != 0 && philo_p->last_meal_time + philo_p->s_philo_data->time_to_die < get_time())
 	{
 		philo_p->s_philo_data->someone_is_dead = 1;
-		printf("%lld Philo %d died\n", get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id);
+		printf("%lld Philosopher %d died\n", get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id);
 		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
 		return 1;
 	}else{
@@ -132,7 +132,7 @@ void eat(t_philo *philo_p)
 		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 		return ;
 	}
-	printf("%lld Philo id = %d Picked up left fork id == %d\n",get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id, philo_p->left_fork);
+	printf("%lld Philosopher id = %d Picked up left fork id == %d\n",get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id, philo_p->left_fork);
 	if(change_to_dead(philo_p) == 1)
 	{
 		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
@@ -144,17 +144,18 @@ void eat(t_philo *philo_p)
 		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 		return ;
 	}
-	printf("%lld Philo id = %d Picked up right fork id == %d\n",get_time() - philo_p->s_philo_data->start_time,  philo_p->philo_id,philo_p->right_fork);
-	usleep(philo_p->s_philo_data->time_to_eat * 1000);
+	printf("%lld Philosopher id = %d Picked up right fork id == %d\n",get_time() - philo_p->s_philo_data->start_time,  philo_p->philo_id,philo_p->right_fork);
 	philo_p->times_ate++;
+
 	if(change_to_dead(philo_p) == 1)
 	{
 		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
 		return ;
 	}else{
-		printf("%lld Philo %d is eating\n",get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id);
 		philo_p->last_meal_time = get_time();
+		printf("%lld Philosopher %d is eating\n",get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id);
+		usleep(philo_p->s_philo_data->time_to_eat * 1000);
 	}
 	pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 	pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
@@ -166,8 +167,22 @@ void philo_sleep(t_philo *philo_p)
 	{
 		return ;
 	}else{
+		long long time = get_time();
+		// long long time_of_death = time - philo_p->last_meal_time;
 		printf("%lld Philosopher id = %d is sleeping\n", get_time() - philo_p->s_philo_data->start_time,  philo_p->philo_id);
-		usleep(philo_p->s_philo_data->time_to_sleep * 1000);
+		while(1)
+		{
+			// if(time_of_death > philo_p->s_philo_data->time_to_die)
+			// {
+			// 	printf("%lld Philosopher %d died\n", get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id);
+			// 	pthread_mutex_lock(&philo_p->s_philo_data->death_lock);
+			// 	philo_p->s_philo_data->someone_is_dead = 1;	
+			// 	pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
+			// 	break;	
+			// }
+			if(get_time() - time >= philo_p->s_philo_data->time_to_sleep)
+				break;
+		}
 	}
 }
 int check_if_dead(t_philo *philo_p)
@@ -201,9 +216,9 @@ int one_philo(t_philo *philo_p)
 {
 	if(philo_p->s_philo_data->philo_num == 1)
 	{
-		printf("%lld Philo id = %d Picked up left fork id == %d\n", get_time() - philo_p->s_philo_data->start_time , philo_p->philo_id,philo_p->right_fork);
+		printf("%lld Philosopher id = %d Picked up left fork id == %d\n", get_time() - philo_p->s_philo_data->start_time , philo_p->philo_id,philo_p->right_fork);
 		usleep(philo_p->s_philo_data->time_to_die * 1000);
-		printf("%lld Philo %d died\n",get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id);
+		printf("%lld Philosopher %d died\n",get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id);
 		return 1;
 	}
 	return 0;
