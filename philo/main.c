@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/27 17:55:23 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/27 20:37:40 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,14 +65,6 @@ int init_philos(t_philo_data *philo)
 		i++;
 	}
 	philo->someone_is_dead = 0;
-	// i = 0;
-	// while (i < philo->philo_num)
-	// {
-	// 	printf("%d\n",philo->philo[i].philo_id);
-	// 	i++;
-	// }
-	
-	
 	return 1;
 }
 int throw_err()
