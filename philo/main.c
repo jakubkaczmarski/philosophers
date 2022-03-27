@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/27 13:40:25 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/27 13:53:59 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,17 @@ void eat(t_philo *philo_p)
 	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 	printf("Philo id = %d Picked up left fork id == %d\n", philo_p->philo_id, philo_p->left_fork);
 	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
+	if(philo_p->last_meal_time != 0 && philo_p->last_meal_time + philo_p->s_philo_data->time_to_die < get_time())
+	{
+		printf("Philo %d died %lld || %lld \n", philo_p->philo_id,philo_p->last_meal_time + philo_p->s_philo_data->time_to_die,get_time() );
+		philo_p->state = 0;
+		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
+		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
+		return ;
+	}else{
+		printf("Philo %d is eating\n", philo_p->philo_id);
+	}
 	printf("Philo id = %d Picked up right fork id == %d\n", philo_p->philo_id,philo_p->right_fork);
 	usleep(philo_p->s_philo_data->time_to_eat * 1000);
 	philo_p->times_ate++;
@@ -150,6 +161,17 @@ void thinking(t_philo *philo_p)
 {
 	printf("Philosopher id = %d is thinking\n", philo_p->philo_id);
 }
+int one_philo(t_philo *philo_p)
+{
+	if(philo_p->s_philo_data->philo_num == 1)
+	{
+		printf("Philo id = %d Picked up left fork id == %d\n", philo_p->philo_id,philo_p->right_fork);
+		usleep(philo_p->s_philo_data->time_to_die * 1000);
+		printf("Philo %d died\n", philo_p->philo_id);
+		return 1;
+	}
+	return 0;
+}
 int state_check(t_philo *philo_p)
 {
 		if(philo_p->state == 0)
@@ -168,6 +190,8 @@ void *manage_philo(void * philo_p)
 	if(!philo_p)
 		printf("Siemanko");
 	int i = 0;
+	if(one_philo(philo_p) == 1)
+		return NULL;
 	while(1)
 	{
 		if(state_check((t_philo*)philo_p) == 1)
