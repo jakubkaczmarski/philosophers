@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:14:18 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/26 15:07:07 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/27 12:48:42 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ typedef struct s_philo
 	int right_fork;
 	long long last_meal_time;
 	pthread_t philo_thread;
+	int state;
+	int times_ate;
 	struct s_philo_data *s_philo_data;
 } t_philo;
 
@@ -42,6 +44,7 @@ typedef struct s_philo_data
 	int time_to_eat;
 	int time_to_die;
 	pthread_mutex_t *forks_arr;
+	pthread_mutex_t death_lock;
 	int eat_times;
 	t_philo *philo;
 } t_philo_data;

@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/26 17:12:54 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/27 13:03:41 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ t_philo_data* get_input(int argc, char **argv)
 			return NULL;
 		}
 	}else{
-		philo->eat_times = 1;
+		philo->eat_times = -1;
 	}
     if(philo->philo_num < 0 || philo->time_to_die < 0 || philo->time_to_eat < 0 || philo->time_to_sleep < 0)
         return NULL;
@@ -53,11 +53,13 @@ int init_philos(t_philo_data *philo)
 			philo->philo[i].left_fork = philo->philo_num - 1;
 			philo->philo[i].right_fork = i;
 			philo->philo[i].s_philo_data = philo;
+			philo->philo[i].state = 1;
 		}else
 		{
 			philo->philo[i].philo_id = i;
 			philo->philo[i].left_fork = i - 1;
 			philo->philo[i].right_fork = i;
+			philo->philo[i].state = 1;
 			philo->philo[i].s_philo_data = philo;
 		}
 		i++;
@@ -82,6 +84,7 @@ int	init_mutex(t_philo_data *philo)
 		}
 		i++;
 	}
+	pthread_mutex_destroy(&(philo->death_lock));
 	return 0;
 }
 long long get_time()
@@ -98,7 +101,21 @@ void eat(t_philo *philo_p)
 	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
 	printf("Philo id = %d Picked up right fork id == %d\n", philo_p->philo_id,philo_p->right_fork);
 	usleep(philo_p->s_philo_data->time_to_eat * 1000);
+	philo_p->times_ate++;
+	pthread_mutex_lock(&philo_p->s_philo_data->death_lock);
+	printf("\nTime %lld\n", philo_p->last_meal_time);
+	if(philo_p->last_meal_time + philo_p->s_philo_data->time_to_die > get_time())
+	{
+		printf("Philo %d died\n", philo_p->philo_id);
+		philo_p->state = 0;
+		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
+		return ;
+	}else{
+		printf("Philo %d is eating\n", philo_p->philo_id);
+	}
 	philo_p->last_meal_time = get_time();
+	pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
 	pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 	pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
 
@@ -112,26 +129,36 @@ void thinking(t_philo *philo_p)
 {
 	printf("Philosopher id = %d is thinking\n", philo_p->philo_id);
 }
+int state_check(t_philo *philo_p)
+{
+		if(philo_p->state == 0)
+		{
+			return 1;
+		}else
+		{
+			return 0;
+		}
+		if(philo_p->s_philo_data->eat_times != -1)
+		{
+			if(philo_p->times_ate == philo_p->s_philo_data->eat_times)
+				return 1;
+		}
+}
 void *manage_philo(void * philo_p)
 {
-	t_philo *philo_ptr = (t_philo*) philo_p;
+	// t_philo *philo_ptr = (t_philo*) philo_p;
 	if(!philo_p)
 		printf("Siemanko");
 	int i = 0;
-	while(i < philo_ptr->s_philo_data->eat_times)
+	while(1)
 	{
+		if(state_check((t_philo*)philo_p) == 1)
+			break;
 		eat((t_philo*)philo_p);
 		philo_sleep((t_philo*)philo_p);
 		thinking((t_philo*)philo_p);
 		i++;
 	}
-	
-	// if(!philo)
-	// {
-	// }
-	// if(!philo)
-	// {}
-	// printf("Siemanko %d", philo_p->philo_id);
 	return NULL;
 }
 int	init_threads(t_philo_data *philo)
@@ -164,6 +191,7 @@ int clean_threads(t_philo_data *philo)
 		pthread_mutex_destroy(&(philo->forks_arr[i]));
 		i++;
 	}
+	pthread_mutex_destroy(&(philo->death_lock));
 	return 0;
 }
 int	main(int argc, char **argv)
