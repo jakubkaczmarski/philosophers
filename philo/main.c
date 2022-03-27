@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/27 13:24:10 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/27 13:40:25 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int init_philos(t_philo_data *philo)
 			philo->philo[i].state = 1;
 		}else
 		{
-			philo->philo[i].philo_id = i;
+			philo->philo[i].philo_id = i + 1;
 			philo->philo[i].left_fork = i - 1;
 			philo->philo[i].right_fork = i;
 			philo->philo[i].state = 1;
@@ -64,6 +64,14 @@ int init_philos(t_philo_data *philo)
 		}
 		i++;
 	}
+	// i = 0;
+	// while (i < philo->philo_num)
+	// {
+	// 	printf("%d\n",philo->philo[i].philo_id);
+	// 	i++;
+	// }
+	
+	
 	return 1;
 }
 int throw_err()
@@ -117,7 +125,7 @@ void eat(t_philo *philo_p)
 		printf("Philo %d is eating\n", philo_p->philo_id);
 	}
 	philo_p->last_meal_time = get_time();
-	printf("HERE %d\n\n", philo_p->times_ate);
+	// printf("HERE %d\n\n", philo_p->times_ate);
 	pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
 	pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 	pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
@@ -174,6 +182,7 @@ void *manage_philo(void * philo_p)
 int	init_threads(t_philo_data *philo)
 {
 	int i = 0;
+	
 	while(i < philo->philo_num)
 	{
 		if(pthread_create(&philo->philo[i].philo_thread, NULL,manage_philo , (void *)&philo->philo[i]))
