@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:14:18 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/27 13:20:32 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/27 15:10:36 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct s_philo_data
 	int time_to_die;
 	pthread_mutex_t *forks_arr;
 	pthread_mutex_t death_lock;
+	int someone_is_dead;
 	int eat_times;
 	t_philo *philo;
 } t_philo_data;

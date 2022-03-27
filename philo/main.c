@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/27 13:53:59 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/27 15:44:21 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ int init_philos(t_philo_data *philo)
 		}
 		i++;
 	}
+	philo->someone_is_dead = 0;
 	// i = 0;
 	// while (i < philo->philo_num)
 	// {
@@ -92,7 +93,7 @@ int	init_mutex(t_philo_data *philo)
 		}
 		i++;
 	}
-	pthread_mutex_destroy(&(philo->death_lock));
+	pthread_mutex_init(&(philo->death_lock), NULL);
 	return 0;
 }
 long long get_time()
@@ -102,55 +103,67 @@ long long get_time()
 	long long ret_val =time.tv_sec * 1000 + time.tv_usec / 1000;
 	return (ret_val);
 }
-
-void eat(t_philo *philo_p)
+int change_to_dead(t_philo *philo_p)
 {
-	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
-	printf("Philo id = %d Picked up left fork id == %d\n", philo_p->philo_id, philo_p->left_fork);
-	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
+	pthread_mutex_lock(&philo_p->s_philo_data->death_lock);
+	if(philo_p->s_philo_data->someone_is_dead == 1)
+	{
+		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
+		return 1;
+	}
+		
 	if(philo_p->last_meal_time != 0 && philo_p->last_meal_time + philo_p->s_philo_data->time_to_die < get_time())
 	{
-		printf("Philo %d died %lld || %lld \n", philo_p->philo_id,philo_p->last_meal_time + philo_p->s_philo_data->time_to_die,get_time() );
-		philo_p->state = 0;
-		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
-		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
+		philo_p->s_philo_data->someone_is_dead = 1;
+		printf("Philo %d died\n", philo_p->philo_id);
 		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
-		return ;
+		return 1;
 	}else{
-		printf("Philo %d is eating\n", philo_p->philo_id);
+		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
+		return 0;
+	}
+}
+void eat(t_philo *philo_p)
+{
+	
+	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+	if(change_to_dead(philo_p) == 1)
+	{
+		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+		return ;
+	}
+	printf("Philo id = %d Picked up left fork id == %d\n", philo_p->philo_id, philo_p->left_fork);
+	if(change_to_dead(philo_p) == 1)
+	{
+		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+		return ;
+	}
+	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
+	if(change_to_dead(philo_p) == 1)
+	{
+		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+		return ;
 	}
 	printf("Philo id = %d Picked up right fork id == %d\n", philo_p->philo_id,philo_p->right_fork);
 	usleep(philo_p->s_philo_data->time_to_eat * 1000);
 	philo_p->times_ate++;
-	pthread_mutex_lock(&philo_p->s_philo_data->death_lock);
-	printf("\nTime %lld\n", philo_p->last_meal_time);
-	if(philo_p->last_meal_time != 0 && philo_p->last_meal_time + philo_p->s_philo_data->time_to_die < get_time())
+	if(change_to_dead(philo_p) == 1)
 	{
-		printf("Philo %d died %lld || %lld \n", philo_p->philo_id,philo_p->last_meal_time + philo_p->s_philo_data->time_to_die,get_time() );
-		philo_p->state = 0;
 		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
-		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
 		return ;
 	}else{
 		printf("Philo %d is eating\n", philo_p->philo_id);
+		philo_p->last_meal_time = get_time();
 	}
-	philo_p->last_meal_time = get_time();
-	// printf("HERE %d\n\n", philo_p->times_ate);
-	pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
 	pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 	pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
 
 }
 void philo_sleep(t_philo *philo_p)
 {
-	if(philo_p->last_meal_time != 0 && philo_p->last_meal_time + philo_p->s_philo_data->time_to_die < get_time())
+	if(change_to_dead(philo_p) == 1)
 	{
-		printf("Philo %d died %lld || %lld \n", philo_p->philo_id,philo_p->last_meal_time + philo_p->s_philo_data->time_to_die,get_time() );
-		philo_p->state = 0;
-		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
-		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
-		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
 		return ;
 	}else{
 		printf("Philosopher id = %d is sleeping\n", philo_p->philo_id);
@@ -172,6 +185,18 @@ int one_philo(t_philo *philo_p)
 	}
 	return 0;
 }
+int check_if_dead(t_philo *philo_p)
+{
+	pthread_mutex_lock(&philo_p->s_philo_data->death_lock);
+	if(philo_p->s_philo_data->someone_is_dead == 1)
+	{
+		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
+		return 1;
+	}else{
+		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
+		return 0;
+	}
+}
 int state_check(t_philo *philo_p)
 {
 		if(philo_p->state == 0)
@@ -186,18 +211,30 @@ int state_check(t_philo *philo_p)
 }
 void *manage_philo(void * philo_p)
 {
-	// t_philo *philo_ptr = (t_philo*) philo_p;
+	t_philo *philo_ptr = (t_philo*) philo_p;
 	if(!philo_p)
 		printf("Siemanko");
 	int i = 0;
 	if(one_philo(philo_p) == 1)
 		return NULL;
+	if(philo_ptr->philo_id % 2 == 0)
+		usleep(500 * philo_ptr->s_philo_data->time_to_eat);
 	while(1)
 	{
 		if(state_check((t_philo*)philo_p) == 1)
 			break;
+		if(check_if_dead((t_philo*)philo_p) == 1)
+			break;
 		eat((t_philo*)philo_p);
+		if(state_check((t_philo*)philo_p) == 1)
+			break;
+		if(check_if_dead((t_philo*)philo_p) == 1)
+			break;
 		philo_sleep((t_philo*)philo_p);
+		if(state_check((t_philo*)philo_p) == 1)
+			break;
+		if(check_if_dead((t_philo*)philo_p) == 1)
+			break;
 		thinking((t_philo*)philo_p);
 		i++;
 	}
