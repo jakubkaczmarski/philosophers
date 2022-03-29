@@ -3,19 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   philo_help.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 11:25:14 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/27 17:06:51 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/29 19:24:57 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_isdigit(int c)
+int		ft_isdigit(int c)
 {
 	return (c >= '0' && c <= '9');
 }
+
 char	*run_edgecase(void)
 {
 	char	*resarr;
@@ -35,6 +36,7 @@ char	*run_edgecase(void)
 	resarr[11] = '\0';
 	return (resarr);
 }
+
 int	getlenght(int checknum)
 {
 	int	len;
@@ -62,7 +64,6 @@ void	checkedgecase(char *resarr, int *negative, int n, int *len)
 	}
 }
 
-
 int	ft_atoi(const char *str)
 {
 	int	res;
@@ -71,8 +72,8 @@ int	ft_atoi(const char *str)
 
 	negative = 1;
 	counter = 0;
-	while (str[counter] == ' ' || str[counter] == '\t' || str[counter] == '\n'
-		|| str[counter] == '\v' || str[counter] == '\f' || str[counter] == '\r')
+	while (str[counter] == ' ' || str[counter] == '\t' || str[counter] == '\n' ||
+			str[counter] == '\v' || str[counter] == '\f' || str[counter] == '\r')
 		counter++;
 	if (str[counter] == '-' || str[counter] == '+')
 	{
@@ -105,6 +106,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 	}
 	return (0);
 }
+
 char	*ft_itoa(int n)
 {
 	char	*resarr;
@@ -132,6 +134,7 @@ char	*ft_itoa(int n)
 	checkedgecase(resarr, &negative, n, &len);
 	return (resarr);
 }
+
 int	check_for_int_overflow(int num, char *str)
 {
 	char	*str1;
