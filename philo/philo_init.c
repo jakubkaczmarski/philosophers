@@ -6,32 +6,29 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 13:51:31 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/30 14:01:18 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/30 17:41:09 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_philo_data *	get_input(int argc, char **argv)
+t_philo_data	*get_input(int argc, char **argv)
 {	
-	t_philo_data *philo;
+	t_philo_data	*philo;
 
 	if (argc != 5 && argc != 6)
 		return (NULL);
-	philo = malloc(sizeof(t_philo_data));
-	philo->philo_num = ft_atoi(argv[1]);
-	philo->time_to_die = ft_atoi(argv[2]);
-	philo->time_to_eat = ft_atoi(argv[3]);
-	philo->time_to_sleep = ft_atoi(argv[4]);
+	philo = philo_assigment(argv);
 	if (check_for_int_overflow(philo->philo_num, argv[1]) == 0
 		|| check_for_int_overflow(philo->time_to_die, argv[2]) == 0
-		|| check_for_int_overflow(philo->time_to_eat , argv[3]) == 0
+		|| check_for_int_overflow(philo->time_to_eat, argv[3]) == 0
 		|| check_for_int_overflow(philo->time_to_sleep, argv[4]) == 0)
 		return (NULL);
 	if (argc == 6)
 	{
 		philo->eat_times = ft_atoi(argv[5]);
-		if (philo->eat_times == 0 || check_for_int_overflow (philo->eat_times, argv[5]) == 0)
+		if (philo->eat_times == 0
+			|| check_for_int_overflow (philo->eat_times, argv[5]) == 0)
 		{
 			return (NULL);
 		}
@@ -42,6 +39,15 @@ t_philo_data *	get_input(int argc, char **argv)
 		|| philo->time_to_eat < 0 || philo->time_to_sleep < 0)
 		return (NULL);
 	return (philo);
+}
+
+void	assign_single_philo(t_philo_data *philo, int i)
+{
+	philo->philo[i].philo_id = i + 1;
+	philo->philo[i].left_fork = i - 1;
+	philo->philo[i].right_fork = i;
+	philo->philo[i].state = 1;
+	philo->philo[i].s_philo_data = philo;
 }
 
 int	init_philos(t_philo_data *philo)
@@ -62,22 +68,12 @@ int	init_philos(t_philo_data *philo)
 		}
 		else
 		{
-			philo->philo[i].philo_id = i + 1;
-			philo->philo[i].left_fork = i - 1;
-			philo->philo[i].right_fork = i;
-			philo->philo[i].state = 1;
-			philo->philo[i].s_philo_data = philo;
+			assign_single_philo(philo, i);
 		}
 		i++;
 	}
 	philo->someone_is_dead = 0;
 	return (1);
-}
-
-int	throw_err(void)
-{
-	printf("Error\n");
-	return (0);
 }
 
 int	init_mutex(t_philo_data *philo)

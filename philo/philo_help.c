@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 11:25:14 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/30 13:50:28 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/30 17:29:40 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,10 @@ void	checkedgecase(char *resarr, int *negative, int n, int *len)
 		resarr[*len] = n % 10 + '0';
 		n = n / 10;
 	}
+}
+
+int	throw_err(void)
+{
+	printf("Error\n");
+	return (0);
 }

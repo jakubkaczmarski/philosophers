@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 14:20:07 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/30 15:10:01 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/30 18:10:13 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,42 +14,29 @@
 
 void	eat(t_philo *philo_p)
 {
-	
 	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
-	if(change_to_dead(philo_p) == 1)
-	{
-		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+	if (check_death_l(philo_p) == 1)
 		return ;
-	}
-	printf("%lld Philosopher id = %d Picked up left fork id == %d\n",get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id, philo_p->left_fork);
-	if(change_to_dead(philo_p) == 1)
-	{
-		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+	l_fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time);
+	if (check_death_l(philo_p) == 1)
 		return ;
-	}
-	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
-	if(change_to_dead(philo_p) == 1)
-	{
-		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+	pthread_mutex_lock(
+		&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
+	if (check_death_l(philo_p) == 1)
 		return ;
-	}
-	printf("%lld Philosopher id = %d Picked up right fork id == %d\n",get_time() - philo_p->s_philo_data->start_time,  philo_p->philo_id,philo_p->right_fork);
+	r_fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time);
 	philo_p->times_ate++;
-
 	if (change_to_dead(philo_p) == 1)
 	{
-		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
-		pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
+		pthread_mutex_unlock(
+			&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+		pthread_mutex_unlock(
+			&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
 		return ;
 	}
 	else
-	{
-		philo_p->last_meal_time = get_time();
-		printf("%lld Philosopher %d is eating\n",get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id);
-		usleep(philo_p->s_philo_data->time_to_eat * 1000);
-	}
-	pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
-	pthread_mutex_unlock(&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
+		philo_eat(philo_p);
+	unlock_mutex(philo_p);
 }
 
 void	philo_sleep(t_philo *philo_p)
@@ -68,7 +55,7 @@ void	philo_sleep(t_philo *philo_p)
 		while (1)
 		{
 			if (get_time() - time >= philo_p->s_philo_data->time_to_sleep)
-				break;
+				break ;
 		}
 	}
 }

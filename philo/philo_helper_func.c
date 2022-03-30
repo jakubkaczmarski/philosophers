@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 13:49:16 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/30 13:50:39 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/30 17:42:04 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,4 +98,16 @@ int	check_for_int_overflow(int num, char *str)
 		free(str1);
 		return (0);
 	}
+}
+
+t_philo_data	*philo_assigment(char **argv)
+{
+	t_philo_data	*philo;
+
+	philo = malloc(sizeof(t_philo_data));
+	philo->philo_num = ft_atoi(argv[1]);
+	philo->time_to_die = ft_atoi(argv[2]);
+	philo->time_to_eat = ft_atoi(argv[3]);
+	philo->time_to_sleep = ft_atoi(argv[4]);
+	return (philo);
 }
