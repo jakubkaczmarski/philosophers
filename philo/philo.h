@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:14:18 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/30 14:21:22 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/30 15:00:55 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,5 @@ void		eat(t_philo *philo_p);
 void		philo_sleep(t_philo *philo_p);
 void		thinking(t_philo *philo_p);
 int			clean_threads(t_philo_data *philo);
+void		print_time(t_philo *philo_p);;
 #endif
