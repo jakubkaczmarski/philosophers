@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:14:18 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/27 17:06:30 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/03/30 14:21:22 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,6 @@
 #include <pthread.h>
 #include <sys/time.h>
 
-typedef struct sStack
-{
-	int				top;
-	unsigned int	capacity;
-	pthread_mutex_t		*array;
-}	t_stack;
 typedef struct s_philo
 {
 	int philo_id;
@@ -60,7 +54,17 @@ int		ft_atoi(const char *str);
 int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_itoa(int n);
 int		check_for_int_overflow(int num, char *str);
-int		throw_err();
+int		throw_err(void);
 t_philo_data* get_input(int argc, char **argv);
-
+int			init_philos(t_philo_data *philo);
+int			init_mutex(t_philo_data *philo);
+int			change_to_dead(t_philo *philo_p);
+int			check_if_dead(t_philo *philo_p);
+int			state_check(t_philo *philo_p);
+int			one_philo(t_philo *philo_p);
+long long	get_time(void);
+void		eat(t_philo *philo_p);
+void		philo_sleep(t_philo *philo_p);
+void		thinking(t_philo *philo_p);
+int			clean_threads(t_philo_data *philo);
 #endif
