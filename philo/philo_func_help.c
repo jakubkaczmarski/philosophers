@@ -6,19 +6,11 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 17:50:58 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/30 18:21:47 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/09 18:55:43 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	philo_died_msg(t_philo *philo_p)
-{
-	long long	time;
-
-	time = get_time() - philo_p->s_philo_data->start_time;
-	printf("%lld Philosopher %d died\n", time, philo_p->philo_id);
-}
 
 void	r_fork_pick(t_philo *philo_p, long long time)
 {
@@ -28,7 +20,9 @@ void	r_fork_pick(t_philo *philo_p, long long time)
 
 void	philo_eat(t_philo *philo_p)
 {
+	pthread_mutex_lock(&philo_p->s_philo_data->death_lock);
 	philo_p->last_meal_time = get_time();
+	pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
 	printf("%lld Philosopher %d is eating\n",
 		get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id);
 	usleep(philo_p->s_philo_data->time_to_eat * 1000);
@@ -48,6 +42,19 @@ int	check_death_l(t_philo *philo_p)
 	{
 		pthread_mutex_unlock(
 			&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
+		return (1);
+	}
+	return (0);
+}
+
+int	your_a_wizard(t_philo_data *philo, char **argv)
+{
+	if (check_for_int_overflow(philo->philo_num, argv[1]) == 0
+		|| check_for_int_overflow(philo->time_to_die, argv[2]) == 0
+		|| check_for_int_overflow(philo->time_to_eat, argv[3]) == 0
+		|| check_for_int_overflow(philo->time_to_sleep, argv[4]) == 0)
+	{
+		free(philo);
 		return (1);
 	}
 	return (0);

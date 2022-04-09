@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 14:02:13 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/30 17:50:42 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/09 18:52:05 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,6 @@ int	change_to_dead(t_philo *philo_p)
 	pthread_mutex_lock(&philo_p->s_philo_data->death_lock);
 	if (philo_p->s_philo_data->someone_is_dead == 1)
 	{
-		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
-		return (1);
-	}
-	if (philo_p->last_meal_time != 0 && philo_p->last_meal_time
-		+ philo_p->s_philo_data->time_to_die < get_time())
-	{
-		philo_p->s_philo_data->someone_is_dead = 1;
-		philo_died_msg(philo_p);
 		pthread_mutex_unlock(&philo_p->s_philo_data->death_lock);
 		return (1);
 	}

@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/30 18:23:01 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/09 19:07:18 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	*manage_philo(void *philo_p)
 	i = 0;
 	if (init_philo_loop(philo_p) == 1)
 		return (NULL);
-	while (check_if_dead((t_philo *)philo_p) == 0)
+	while (change_to_dead(philo_p) != 1)
 	{
 		if (state_check((t_philo *)philo_p) == 1
 			|| check_if_dead((t_philo *)philo_p) == 1)
@@ -46,16 +46,43 @@ int	init_threads(t_philo_data *philo)
 	int	i;
 
 	i = 0;
+	philo->dead_id = -1;
 	while (i < philo->philo_num)
 	{
 		if (pthread_create(&philo->philo[i].philo_thread, NULL, manage_philo,
 				(void *)&philo->philo[i]))
-		{
 			return (1);
-		}
 		i++;
 	}
+	kapibara(philo);
 	return (0);
+}
+
+void	kapibara(t_philo_data *philo)
+{
+	int	j;
+
+	while (philo->philo_num != 1)
+	{
+		j = 0;
+		while (j < philo->philo_num)
+		{
+			pthread_mutex_lock(&philo->death_lock);
+			if (philo->philo[j].last_meal_time != 0
+				&& get_time() - philo->philo[j].last_meal_time
+				> philo->time_to_die)
+			{
+				printf("%lld Philo id = %d died\n",
+					get_time() - philo->philo[j].last_meal_time, j + 1);
+				philo->someone_is_dead = 1;
+				philo->dead_id = j;
+				pthread_mutex_unlock(&philo->death_lock);
+				return ;
+			}
+			pthread_mutex_unlock(&philo->death_lock);
+			j++;
+		}
+	}
 }
 
 int	init_philo_loop(t_philo *philo_p)
@@ -76,6 +103,7 @@ int	main(int argc, char **argv)
 		return (throw_err());
 	else
 	{
+		philo->dead_id = -1;
 		init_mutex(philo);
 		init_philos(philo);
 		philo->start_time = get_time();

@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:14:18 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/03/30 18:27:19 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/09 18:59:03 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,16 @@ typedef struct s_philo_data
 	int				time_to_die;
 	pthread_mutex_t	*forks_arr;
 	pthread_mutex_t	death_lock;
+	pthread_mutex_t	action_lock;
+	int				dead_id;
 	int				someone_is_dead;
 	int				eat_times;
 	long long		start_time;
 	t_philo			*philo;
 }	t_philo_data;
 
+void			kapibara(t_philo_data *philo);
+int				your_a_wizard(t_philo_data *philo, char **argv);
 int				ft_isdigit(int c);
 char			*run_edgecase(void);
 int				getlenght(int checknum);
