@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 13:51:31 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/09 18:55:21 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/10 15:53:18 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,20 @@ t_philo_data	*get_input(int argc, char **argv)
 	if (argc != 5 && argc != 6)
 		return (NULL);
 	philo = philo_assigment(argv);
-	if (your_a_wizard(philo, argv) == 1)
+	if (inp_handling(philo, argv) == 1)
 		return (NULL);
 	if (argc == 6)
 	{
 		philo->eat_times = ft_atoi(argv[5]);
 		if (philo->eat_times == 0
 			|| check_for_int_overflow (philo->eat_times, argv[5]) == 0)
-			return (NULL);
+			return (ret_free(philo));
 	}
 	else
 		philo->eat_times = -1;
 	if (philo->philo_num < 0 || philo->time_to_die < 0
 		|| philo->time_to_eat < 0 || philo->time_to_sleep < 0)
-		return (NULL);
+		return (ret_free(philo));
 	return (philo);
 }
 

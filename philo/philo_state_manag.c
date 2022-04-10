@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 14:20:07 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/09 18:56:39 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/10 16:03:29 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@ void	eat(t_philo *philo_p)
 {
 	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 	if (check_death_l(philo_p) == 0)
-		l_fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time);
+		fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time);
 	if (check_death_l(philo_p) == 1)
 		return ;
 	pthread_mutex_lock(
 		&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
 	if (check_death_l(philo_p) == 1)
 		return ;
-	r_fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time);
+	fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time);
 	philo_p->times_ate++;
-	if (change_to_dead(philo_p) == 1)
+	if (check_if_dead(philo_p) == 1)
 	{
 		pthread_mutex_unlock(
 			&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
@@ -42,14 +42,14 @@ void	philo_sleep(t_philo *philo_p)
 {
 	long long	time;
 
-	if (change_to_dead(philo_p) == 1)
+	if (check_if_dead(philo_p) == 1)
 	{
 		return ;
 	}
 	else
 	{
 		time = get_time();
-		printf("%lld Philosopher id = %d is sleeping\n",
+		printf("%lld Philosopher %d is sleeping\n",
 			get_time() - philo_p->s_philo_data->start_time, philo_p->philo_id);
 		while (1)
 		{
@@ -71,10 +71,6 @@ void	print_time(t_philo *philo_p)
 
 void	thinking(t_philo *philo_p)
 {
-	if (change_to_dead(philo_p) == 1)
-	{
-		return ;
-	}
 	if (check_if_dead((t_philo *)philo_p) == 1)
 	{	
 		return ;

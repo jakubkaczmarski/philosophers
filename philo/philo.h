@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:14:18 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/09 18:59:03 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/10 15:55:50 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ typedef struct s_philo_data
 	int				time_to_die;
 	pthread_mutex_t	*forks_arr;
 	pthread_mutex_t	death_lock;
-	pthread_mutex_t	action_lock;
 	int				dead_id;
 	int				someone_is_dead;
 	int				eat_times;
@@ -47,8 +46,10 @@ typedef struct s_philo_data
 	t_philo			*philo;
 }	t_philo_data;
 
-void			kapibara(t_philo_data *philo);
-int				your_a_wizard(t_philo_data *philo, char **argv);
+t_philo_data	*ret_free(t_philo_data	*philo);
+int				all_ate(t_philo_data *philo);
+void			loop_check(t_philo_data *philo);
+int				inp_handling(t_philo_data *philo, char **argv);
 int				ft_isdigit(int c);
 char			*run_edgecase(void);
 int				getlenght(int checknum);
@@ -61,7 +62,6 @@ int				throw_err(void);
 t_philo_data	*get_input(int argc, char **argv);
 int				init_philos(t_philo_data *philo);
 int				init_mutex(t_philo_data *philo);
-int				change_to_dead(t_philo *philo_p);
 int				check_if_dead(t_philo *philo_p);
 int				state_check(t_philo *philo_p);
 int				one_philo(t_philo *philo_p);
@@ -73,10 +73,9 @@ int				clean_threads(t_philo_data *philo);
 void			print_time(t_philo *philo_p);
 t_philo_data	*philo_assigment(char **argv);
 void			assign_single_philo(t_philo_data *philo, int i);
-void			l_fork_pick(t_philo *philo_p, long long time);
+void			fork_pick(t_philo *philo_p, long long time);
 void			philo_died_msg(t_philo *philo_p);
 void			philo_eat(t_philo *philo_p);
-void			r_fork_pick(t_philo *philo_p, long long time);
 void			unlock_mutex(t_philo *philo_p);
 int				check_death_l(t_philo *philo_p);
 int				init_philo_loop(t_philo *philo_p);
