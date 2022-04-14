@@ -14,10 +14,8 @@
 
 void	*manage_philo(void *philo_p)
 {
-	t_philo	*philo_ptr;
 	int		i;
 
-	philo_ptr = (t_philo *) philo_p;
 	i = 0;
 	if (init_philo_loop(philo_p) == 1)
 		return (NULL);
