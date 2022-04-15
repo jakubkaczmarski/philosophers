@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 13:51:31 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/10 15:53:18 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/15 12:11:47 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_philo_data	*get_input(int argc, char **argv)
 	if (argc == 6)
 	{
 		philo->eat_times = ft_atoi(argv[5]);
-		if (philo->eat_times == 0
+		if (philo->eat_times <= 0
 			|| check_for_int_overflow (philo->eat_times, argv[5]) == 0)
 			return (ret_free(philo));
 	}
