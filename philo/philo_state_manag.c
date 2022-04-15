@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_state_manag.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 14:20:07 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/10 16:03:29 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/15 19:19:27 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ void	eat(t_philo *philo_p)
 	if (check_death_l(philo_p) == 1)
 		return ;
 	fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time);
+	pthread_mutex_lock(&philo_p->s_philo_data->eat_lock);
 	philo_p->times_ate++;
+	pthread_mutex_unlock(&philo_p->s_philo_data->eat_lock);
 	if (check_if_dead(philo_p) == 1)
 	{
 		pthread_mutex_unlock(
@@ -104,5 +106,6 @@ int	clean_threads(t_philo_data *philo)
 	}
 	free(philo->forks_arr);
 	pthread_mutex_destroy(&(philo->death_lock));
+	pthread_mutex_destroy(&(philo->eat_lock));
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_dead_manag.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 14:02:13 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/10 15:56:34 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/15 19:20:17 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,18 @@ int	all_ate(t_philo_data *philo)
 {
 	int	i;
 
+	pthread_mutex_lock(&philo->eat_lock);
 	i = 0;
 	while (i < philo->philo_num)
 	{
 		if (philo->philo[i].times_ate != philo->eat_times)
+		{
+			pthread_mutex_unlock(&philo->eat_lock);
 			return (1);
+		}
 		i++;
 	}
+	pthread_mutex_unlock(&philo->eat_lock);
 	return (0);
 }
 
@@ -43,15 +48,21 @@ int	check_if_dead(t_philo *philo_p)
 
 int	state_check(t_philo *philo_p)
 {
+	pthread_mutex_lock(&philo_p->s_philo_data->eat_lock);
 	if (philo_p->state == 0)
 	{
+		pthread_mutex_unlock(&philo_p->s_philo_data->eat_lock);
 		return (1);
 	}
 	else if (philo_p->s_philo_data->eat_times != -1)
 	{
 		if (philo_p->times_ate == philo_p->s_philo_data->eat_times)
+		{
+			pthread_mutex_unlock(&philo_p->s_philo_data->eat_lock);
 			return (1);
+		}
 	}
+	pthread_mutex_unlock(&philo_p->s_philo_data->eat_lock);
 	return (0);
 }
 
