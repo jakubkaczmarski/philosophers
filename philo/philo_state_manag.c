@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 14:20:07 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/15 19:19:27 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/15 20:13:15 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,14 +96,14 @@ int	clean_threads(t_philo_data *philo)
 		}
 		i++;
 	}
-	free(philo->philo);
-	free(philo);
 	i = 0;
 	while (i < philo->philo_num)
 	{
 		pthread_mutex_destroy(&(philo->forks_arr[i]));
 		i++;
 	}
+	free(philo->philo);
+	free(philo);
 	free(philo->forks_arr);
 	pthread_mutex_destroy(&(philo->death_lock));
 	pthread_mutex_destroy(&(philo->eat_lock));
