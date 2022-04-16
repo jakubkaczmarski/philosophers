@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 14:20:07 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/16 10:07:57 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/16 10:24:42 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	print_time(t_philo *philo_p)
 	long long	time;
 
 	time = get_time() - philo_p->s_philo_data->start_time;
-	printf("%lld Philosopher id = %d is thinking\n", time, philo_p->philo_id);
+	printf("%lld Philosopher %d is thinking\n", time, philo_p->philo_id);
 }
 
 void	thinking(t_philo *philo_p)
