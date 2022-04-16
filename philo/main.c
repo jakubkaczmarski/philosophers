@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/16 10:07:42 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/16 10:20:56 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	loop_check(t_philo_data *philo)
 
 	while (philo->philo_num != 1)
 	{
-		j = 0;
+		j = 0;	
 		while (j < philo->philo_num)
 		{
 			if (all_ate(philo) == 0)
@@ -73,12 +73,13 @@ void	loop_check(t_philo_data *philo)
 				> philo->time_to_die)
 			{
 				printf("%lld Philo %d died\n",
-					get_time() - philo->philo[j].last_meal_time, j + 1);
+					get_time() - philo->start_time, j + 1);
 				philo->someone_is_dead = 1;
 				pthread_mutex_unlock(&philo->death_lock);
 				return ;
 			}
 			pthread_mutex_unlock(&philo->death_lock);
+			usleep(50);
 			j++;
 		}
 	}
