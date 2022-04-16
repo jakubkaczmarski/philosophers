@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 14:02:13 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/16 09:56:16 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/16 10:09:54 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	all_ate(t_philo_data *philo)
 	i = 0;
 	while (i < philo->philo_num)
 	{
-		if (philo->philo[i].times_ate != philo->eat_times)
+		if (philo->philo[i].times_ate > philo->eat_times)
 		{
 			pthread_mutex_unlock(&philo->eat_lock);
 			return (1);
