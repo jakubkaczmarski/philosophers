@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/16 10:23:11 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/16 10:31:02 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	loop_check(t_philo_data *philo)
 
 	while (philo->philo_num != 1)
 	{
-		j = 0;	
+		j = 0;
 		while (j < philo->philo_num)
 		{
 			if (all_ate(philo) == 0)
