@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/18 11:58:11 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/18 12:04:37 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ void	loop_check(t_philo_data *philo)
 		{
 			if (all_ate(philo) == 0)
 				return ;
-			usleep(100);
 			pthread_mutex_lock(&philo->death_lock);
 			if (philo->philo[j].last_meal_time != 0
 				&& get_time() - philo->philo[j].last_meal_time
@@ -80,7 +79,7 @@ void	loop_check(t_philo_data *philo)
 				return ;
 			}
 			pthread_mutex_unlock(&philo->death_lock);
-			
+			usleep(150);
 			j++;
 		}
 	}
