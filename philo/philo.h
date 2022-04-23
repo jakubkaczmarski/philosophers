@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
+/*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:14:18 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/15 19:08:53 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/23 13:29:26 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_philo_data
 	int				dead_id;
 	int				someone_is_dead;
 	int				eat_times;
+	long long		dead_time;
 	long long		start_time;
 	t_philo			*philo;
 }	t_philo_data;
@@ -74,7 +75,7 @@ int				clean_threads(t_philo_data *philo);
 void			print_time(t_philo *philo_p);
 t_philo_data	*philo_assigment(char **argv);
 void			assign_single_philo(t_philo_data *philo, int i);
-void			fork_pick(t_philo *philo_p, long long time);
+void			fork_pick(t_philo *philo_p, long long time, int dir);
 void			philo_died_msg(t_philo *philo_p);
 void			philo_eat(t_philo *philo_p);
 void			unlock_mutex(t_philo *philo_p);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_state_manag.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
+/*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 14:20:07 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/16 10:24:42 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/23 13:32:15 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,14 @@ void	eat(t_philo *philo_p)
 {
 	pthread_mutex_lock(&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
 	if (check_death_l(philo_p) == 0)
-		fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time);
+		fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time, 1);
 	if (check_death_l(philo_p) == 1)
 		return ;
 	pthread_mutex_lock(
 		&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
 	if (check_death_l(philo_p) == 1)
 		return ;
-	fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time);
+		fork_pick(philo_p, get_time() - philo_p->s_philo_data->start_time, 0);
 	pthread_mutex_lock(&philo_p->s_philo_data->eat_lock);
 	philo_p->times_ate++;
 	pthread_mutex_unlock(&philo_p->s_philo_data->eat_lock);
@@ -66,9 +66,11 @@ void	philo_sleep(t_philo *philo_p)
 void	print_time(t_philo *philo_p)
 {
 	long long	time;
-
-	time = get_time() - philo_p->s_philo_data->start_time;
-	printf("%lld Philosopher %d is thinking\n", time, philo_p->philo_id);
+	if(check_if_dead(philo_p) == 0)
+	{
+		time = get_time() - philo_p->s_philo_data->start_time;
+		printf("%lld Philosopher %d is thinking\n", time, philo_p->philo_id);
+	}
 }
 
 void	thinking(t_philo *philo_p)
@@ -96,6 +98,13 @@ int	clean_threads(t_philo_data *philo)
 		}
 		i++;
 	}
+	pthread_mutex_lock(&philo->death_lock);
+	if(philo->someone_is_dead == 1)
+	{
+		printf("%lld Philo %d died\n",
+			philo->dead_time, philo->dead_id);
+	}
+	pthread_mutex_unlock(&philo->death_lock);
 	i = 0;
 	while (i < philo->philo_num)
 	{

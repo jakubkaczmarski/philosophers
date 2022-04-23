@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_dead_manag.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkaczmar <jkaczmar@student.42wolfsburg.de> +#+  +:+       +#+        */
+/*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 14:02:13 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/16 10:13:16 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/23 13:09:44 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	one_philo(t_philo *philo_p)
 	if (philo_p->s_philo_data->philo_num == 1)
 	{
 		val = get_time() - philo_p->s_philo_data->start_time;
-		fork_pick(philo_p, val);
+		fork_pick(philo_p, val, 2);
 		usleep (philo_p->s_philo_data->time_to_die * 1000);
 		val = get_time() - philo_p->s_philo_data->start_time;
 		printf("%lld Philosopher %d died\n", val, philo_p->philo_id);
