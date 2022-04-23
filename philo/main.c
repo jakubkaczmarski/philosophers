@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/25 15:13:37 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/23 13:33:58 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/23 13:39:32 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,17 +67,18 @@ void	loop_check(t_philo_data *philo)
 		{
 			if (all_ate(philo) == 0)
 				return ;
+			pthread_mutex_lock(&philo->death_lock);
 			if (philo->philo[j].last_meal_time != 0
 				&& get_time() - philo->philo[j].last_meal_time
 				> philo->time_to_die)
 			{
-				pthread_mutex_lock(&philo->death_lock);
 				philo->someone_is_dead = 1;
 				philo->dead_time = get_time() - philo->start_time;
 				philo->dead_id = j + 1;
 				pthread_mutex_unlock(&philo->death_lock);
 				return ;
 			}
+			pthread_mutex_unlock(&philo->death_lock);
 			usleep(150);
 			j++;
 		}
