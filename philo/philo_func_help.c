@@ -6,7 +6,7 @@
 /*   By: jkaczmar <jkaczmar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 17:50:58 by jkaczmar          #+#    #+#             */
-/*   Updated: 2022/04/23 13:23:09 by jkaczmar         ###   ########.fr       */
+/*   Updated: 2022/04/23 13:34:54 by jkaczmar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,14 @@
 
 void	fork_pick(t_philo *philo_p, long long time, int dir)
 {
-	if(check_if_dead(philo_p) == 1)
+	if (check_if_dead(philo_p) == 1)
 	{
-		if(dir == 1)
+		if (dir == 1)
 		{
 			pthread_mutex_unlock(
 				&philo_p->s_philo_data->forks_arr[philo_p->left_fork]);
-		}else if(dir == 0)
+		}
+		else if (dir == 0)
 		{
 			pthread_mutex_unlock(
 				&philo_p->s_philo_data->forks_arr[philo_p->right_fork]);
